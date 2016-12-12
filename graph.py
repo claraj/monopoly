@@ -100,6 +100,8 @@ colors = {
 s = Series(counts)
 #print(s)
 
+
+s = s.drop('jail')
 s = s.drop('C')
 s = s.drop('CC')
 
@@ -110,7 +112,6 @@ print(s)
 x = range(len(s))
 
 barlist = plt.bar(x, s)
-
 
 for bar, label in zip(barlist, s.keys()):
     #look up color for label
