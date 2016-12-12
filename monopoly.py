@@ -23,6 +23,7 @@ import display
 
 
 # railroads end with 'railroad' and utilities end with 'utility' so they can be identifed when player has to advance to a square of these types
+# 'C' = Chance, 'CC' = community chest.
 
 squares = ['go', 'mediterranean', 'CC', 'baltic', 'income tax', 'reading railroad', 'oriental avenue', 'C', 'vermont avenue', 'conneticut ave',
 'jail',
@@ -30,7 +31,7 @@ squares = ['go', 'mediterranean', 'CC', 'baltic', 'income tax', 'reading railroa
 'free parking',
 'kentucky avenue', 'C', 'indiana avenue', 'illinois avenue', 'b&o railroad', 'atlantic avenue', 'ventnor avenue', 'water works utility', 'marvin gardens',
 'go to jail',
-'pacific avenue', 'north carolina avenue', 'CC', 'pennsylvania avenue', 'short line', 'C', 'park place', 'income tax', 'boardwalk' ]
+'pacific avenue', 'north carolina avenue', 'CC', 'pennsylvania avenue', 'short line railroad', 'C', 'park place', 'luxury tax', 'boardwalk' ]
 
 groups = {
     'brown' : ('mediterranean', 'baltic') ,
@@ -41,11 +42,11 @@ groups = {
     'yellow' : ('atlantic avenue', 'ventnor avenue', 'marvin gardens'),
     'green' : ('pacific avenue', 'north carolina avenue', 'pennsylvania avenue'),
     'dark_blue' : ('park place', 'boardwalk' ),
-    'bad'  : ('income tax' , 'go to jail', 'jail'),
+    'bad'  : ('income tax' , 'luxury tax', 'go to jail', 'jail'),
     'good' : ('go', 'free parking' ),
     'cards' : ( 'C' , 'CC'),
     'utilities' : ('electric company utility', 'water works utility' ),
-    'railroads' : ('reading railroad', 'pennsylvania railroad', 'b&o railroad', 'short line'),
+    'railroads' : ('reading railroad', 'pennsylvania railroad', 'b&o railroad', 'short line railroad'),
 }
 
 
@@ -73,6 +74,7 @@ class Dice():
         RollResult = namedtuple('Roll', ['roll1', 'roll2', 'total', 'was_double'])
         return RollResult(roll1, roll2, total, was_double)
 
+
 class Board():
 
     def __init__(self):
@@ -87,6 +89,9 @@ class Board():
 
 
     def to_square(self, square_name):
+        '''Advance to a particular square. If name begins with the special characters '^^^' have to
+        figure out which square to move to. Otherwise, move to the square named in square_name'''
+
         if square_name.startswith('^^^'):
             if square_name == '^^^goback3':
                 self.advance(-3)
@@ -98,6 +103,9 @@ class Board():
                     self.advance(1)
         else:
             self.current_square = squares.index(square_name)
+
+        return squares[self.current_square]
+
 
 
 dice = Dice()
@@ -114,21 +122,25 @@ doubles = 0;
 try :
     totalrolls = int(sys.argv[1])
 except :
-    totalrolls = 1000
+    totalrolls = 1000      #Default val, if no arg or is not readable as an integer.
 
 print('Rolling dice %d times' % totalrolls)
+
 
 for roll_count in range(0, totalrolls):
 
     roll = dice.roll()
 
-    if roll.was_double:    ## todo getting out of jail - do we care?
+
+    if roll.was_double:
+
         doubles += 1
         if doubles == 3:
             #print('go to jail')
             current_square = 'jail'
-            board.to_square('jail')
+            board.to_square('jail')    #Assume player pays to get out of jail so can keep moving. Does this make any difference to probability of landing on any particular square?
             doubles = 0
+
         else :
             current_square = board.advance(roll.total)
 
@@ -143,36 +155,34 @@ for roll_count in range(0, totalrolls):
     if current_square == 'CC' :   # community chest
         card = community_chest.popleft()   #take from the start....
         community_chest.append(card)       #and add to the end
-        if card is not None:
-            board.to_square(card)
+        if card is not None:                #If card is one that redirects to another square, then move
+            current_square = board.to_square(card)
+            square_land_count[current_square] += 1
 
     if current_square == 'C':   #chance
         card = chance.popleft()   #take from the start....
         chance.append(card)       #and add to the end
         if card is not None:
-            board.to_square(card)
+            current_square = board.to_square(card)
+            square_land_count[current_square] += 1
 
     if current_square == 'go to jail':
-        board.to_square('jail')
-        current_square = 'jail'
+        current_square = board.to_square('jail')
+        square_land_count[current_square] += 1
 
     #todo get out of jail  (?)
 
 
     if (roll_count % 1000 == 0):
-        #display
+        #display - don't want to update the console every single time.
         display.outputstuff(square_land_count, groups)
 
 
 display.outputstuff(square_land_count, groups)
 
-timestamp = int(time.time())
+timestamp = int(time.time())   #Unique filename
 
 output_file = open('square_data_%d' % timestamp, 'wb')
 
+#Write to a file. Another program will read in and process.
 pickle.dump(square_land_count, output_file)
-
-#
-# with open('square.data', 'w') as f:
-#     f.write(str(square_land_count))
-#     #close?

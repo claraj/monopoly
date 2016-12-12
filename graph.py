@@ -12,6 +12,7 @@ matplotlib.style.use('ggplot')
 
 
 try:
+    #If filename spacified, use that.
     filename = sys.argv[1]
     print(filename)
 except:
@@ -30,6 +31,7 @@ except:
     if time_most_recent == 0 :
         exit('No square_data file found.')
 
+#TODO check for file io errors. TODO Move files to subdirectory to avoid cluttering code dir.
 
 # unpickle a dictionary that monopoly module created and saved.
 
@@ -40,14 +42,13 @@ counts = pickle.load(f)
 #from a run with 5 million rolls
 #counts = {'baltic': 109723, 'virginia avenue': 123649, 'st james place': 139694, 'illinois avenue': 135121, 'conneticut ave': 115121, 'jail': 132896, 'pennsylvania railroad': 132880, 'indiana avenue': 135398, 'mediterranean': 107843, 'go to jail': 131780, 'short line': 120503, 'park place': 108392, 'CC': 383986, 'free parking': 142357, 'new york avenue': 145377, 'atlantic avenue': 134794, 'boardwalk': 108841, 'ventnor avenue': 134481, 'oriental avenue': 113641, 'states avenue': 119461, 'pennsylvania avenue': 124239, 'electric company utility': 116208, 'b&o railroad': 135121, 'pacific avenue': 133123, 'vermont avenue': 116247, 'income tax': 219853, 'kentucky avenue': 140203, 'marvin gardens': 130629, 'go': 107250, 'st charles': 112547, 'C': 367291, 'water works utility': 132487, 'reading railroad': 112729, 'tennessee ave': 145658, 'north carolina avenue': 130477}
 
-
 square_names = ['go', 'mediterranean', 'CC', 'baltic', 'income tax', 'reading railroad', 'oriental avenue', 'C', 'vermont avenue', 'conneticut ave',
 'jail',
 'st charles', 'electric company utility', 'states avenue', 'virginia avenue', 'pennsylvania railroad', 'st james place', 'CC', 'tennessee ave', 'new york avenue',
 'free parking',
 'kentucky avenue', 'C', 'indiana avenue', 'illinois avenue', 'b&o railroad', 'atlantic avenue', 'ventnor avenue', 'water works utility', 'marvin gardens',
 'go to jail',
-'pacific avenue', 'north carolina avenue', 'CC', 'pennsylvania avenue', 'short line', 'C', 'park place', 'income tax', 'boardwalk' ]
+'pacific avenue', 'north carolina avenue', 'CC', 'pennsylvania avenue', 'short line railroad', 'C', 'park place', 'luxury tax', 'boardwalk' ]
 
 
 groups = {
@@ -59,12 +60,13 @@ groups = {
     'yellow' : ('atlantic avenue', 'ventnor avenue', 'marvin gardens'),
     'green' : ('pacific avenue', 'north carolina avenue', 'pennsylvania avenue'),
     'dark_blue' : ('park place', 'boardwalk' ),
-    'bad'  : ('income tax' , 'go to jail', 'jail'),
-    'good' : ('go', 'free parking'),
+    'bad'  : ('income tax', 'luxury tax', 'go to jail', 'jail'),
+    'good' : ('go', 'free parking' ),
     'cards' : ( 'C' , 'CC'),
     'utilities' : ('electric company utility', 'water works utility' ),
-    'railroads' : ('reading railroad', 'pennsylvania railroad', 'b&o railroad', 'short line'),
+    'railroads' : ('reading railroad', 'pennsylvania railroad', 'b&o railroad', 'short line railroad'),
 }
+
 
 #Make a dictionary of names and corresponding color
 
