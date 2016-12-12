@@ -1,6 +1,8 @@
 
 import random
 import sys
+import time
+import pickle
 
 from random import shuffle
 from collections import namedtuple, defaultdict, deque
@@ -39,8 +41,8 @@ groups = {
     'yellow' : ('atlantic avenue', 'ventnor avenue', 'marvin gardens'),
     'green' : ('pacific avenue', 'north carolina avenue', 'pennsylvania avenue'),
     'dark_blue' : ('park place', 'boardwalk' ),
-    'bad'  : ('income tax' , 'go to jail'),
-    'good' : ('go', ),
+    'bad'  : ('income tax' , 'go to jail', 'jail'),
+    'good' : ('go', 'free parking' ),
     'cards' : ( 'C' , 'CC'),
     'utilities' : ('electric company utility', 'water works utility' ),
     'railroads' : ('reading railroad', 'pennsylvania railroad', 'b&o railroad', 'short line'),
@@ -123,7 +125,7 @@ for roll_count in range(0, totalrolls):
     if roll.was_double:    ## todo getting out of jail - do we care?
         doubles += 1
         if doubles == 3:
-            print('go to jail')
+            #print('go to jail')
             current_square = 'jail'
             board.to_square('jail')
             doubles = 0
@@ -156,15 +158,21 @@ for roll_count in range(0, totalrolls):
 
     #todo get out of jail  (?)
 
-# print(type(output))
-# print(dir(output))
 
-    if (roll_count % 100 == 0):
-        #clear screen and then ...
-
+    if (roll_count % 1000 == 0):
+        #display
         display.outputstuff(square_land_count, groups)
 
 
-with open('square.data', 'w') as f:
-    f.write(str(square_land_count))
-    #close?
+display.outputstuff(square_land_count, groups)
+
+timestamp = int(time.time())
+
+output_file = open('square_data_%d' % timestamp, 'wb')
+
+pickle.dump(square_land_count, output_file)
+
+#
+# with open('square.data', 'w') as f:
+#     f.write(str(square_land_count))
+#     #close?
