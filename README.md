@@ -1,3 +1,5 @@
+###Which properties should you buy in Monopoly?
+
 Which squares or spaces is a player most likely to land on in monopoly? Are they all equally likely? A python program to roll the two dice and move around the board, redirecting to jail or go or wherever the rules of the game dictate. Not particularly well tested and probably could be made much more efficient; and I might have overlooked some of the rules. Also the terminal colors probably won't display correctly on Windows.  
 
 Program assumes that player buys themselves out of jail at the first opportunity. Does it make a difference if the player pays to get out of jail, or waits and hopes to roll a double? 
